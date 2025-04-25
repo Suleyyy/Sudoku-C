@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+//TODO: Algorytm czasami nie działa dla planszy 2x2, dlatego trzeba dodać sprawdzanie czy sie dobrze plansza wygenerowała (czy nie ma 0) i w pętli ponawiac dla tego rozmiaru,
+//      Trzeba dodać sprawdzanie czy po usuwaniu jest jedno rozwiązanie i usuwać dopiero kiedy tak faktycznie jest,
+//      Zrobić interfejs użytkownika
+//      Zrobić zapis :/
+
 void printSimpleSudoku(int *board, int n) {
     int size = n * n;
 
@@ -24,7 +29,7 @@ void printSimpleSudoku(int *board, int n) {
             if (board[i * size + j] != 0) {
                 printf("%2d ", board[i * size + j]);
             } else {
-                printf(" . ");
+                printf(" - ");
             }
         }
         printf("|\n");
@@ -106,24 +111,35 @@ void fillDiagonal(int *board, int n) {
         fillBox(board, n, i, i);
     }
 }
+void removeKDigits(int *board, int n, int k) {
+    while (k > 0) {
+        int cellId = rand() % (n*n*n*n);
+        int i = cellId / (n*n);
+        int j = cellId % (n*n);
+        if (board[i*(n*n)+j] != 0) {
+            board[i*(n*n)+j] = 0;
+            k--;
+        }
+    }
+}
 
 void sudokuGenerator(int *board, int k, int n) {
-    // Clear the board
     for (int i = 0; i < n*n * n*n; i++) {
         board[i] = 0;
     }
 
     fillDiagonal(board, n);
     fillRemaining(board, 0, 0, n);
+    removeKDigits(board, n, k);
 }
 
 int main(void) {
     srand(time(NULL));
 
-    int k = 20;
-    int n = 4; // For standard 9x9 Sudoku
+    int k = 50;
+    int n = 3;
 
-    int gameBoard[n*n][n*n]; // Fixed size for standard Sudoku
+    int gameBoard[n*n][n*n];
     sudokuGenerator(gameBoard, k, n);
 
     printSimpleSudoku(gameBoard, n);
