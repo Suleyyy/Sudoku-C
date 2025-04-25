@@ -1,0 +1,12 @@
+# CLion IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+cmake-build-*/
+# CLion IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+cmake-build-*/
