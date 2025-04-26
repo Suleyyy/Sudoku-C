@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Sudoku_C.exe"
+			"path" : "Sudoku-C.exe"
 		},
 		{
-			"path" : "Sudoku_C.pdb"
+			"path" : "Sudoku-C.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -56,7 +56,7 @@
 			]
 		}
 	],
-	"id" : "Sudoku_C::@6890427a1f51a3e7e1df",
+	"id" : "Sudoku-C::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -76,8 +76,8 @@
 		],
 		"language" : "C"
 	},
-	"name" : "Sudoku_C",
-	"nameOnDisk" : "Sudoku_C.exe",
+	"name" : "Sudoku-C",
+	"nameOnDisk" : "Sudoku-C.exe",
 	"paths" : 
 	{
 		"build" : ".",
