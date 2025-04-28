@@ -1,5 +1,4 @@
 #include <locale.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,6 +14,7 @@ typedef struct {
     int size;
     int total;
     int *board;
+    int *boardPuzzle;
     int level;
 } GameBoard;
 
@@ -32,8 +32,8 @@ void printSimpleSudoku(const GameBoard *board) {
                 printf("| ");
             }
 
-            if (board->board[i * board->size + j] != 0) {
-                printf("%2d ", board->board[i * board->size + j]);
+            if (board->boardPuzzle[i * board->size + j] != 0) {
+                printf("%2d ", board->boardPuzzle[i * board->size + j]);
             } else {
                 printf(" - ");
             }
@@ -117,7 +117,7 @@ int countSolutionsHelper(int *board, int size, int n, int i, int j, int count) {
 int countSolutions(const GameBoard *board) {
     int *tempBoard = malloc(sizeof(int) * board->total);
     for (int i = 0; i < board->total; i++) {
-        tempBoard[i] = board->board[i];
+        tempBoard[i] = board->boardPuzzle[i];
     }
 
     int solutions = countSolutionsHelper(tempBoard, board->size, board->n, 0, 0, 0);
@@ -170,14 +170,14 @@ void removeKDigitsWithCheck(const GameBoard *board) {
         int i = cellId / board->size;
         int j = cellId % board->size;
 
-        if (board->board[i * board->size + j] != 0) {
-            int temp = board->board[i * board->size + j];
-            board->board[i * board->size + j] = 0;
+        if (board->boardPuzzle[i * board->size + j] != 0) {
+            int temp = board->boardPuzzle[i * board->size + j];
+            board->boardPuzzle[i * board->size + j] = 0;
 
             if (countSolutions(board) == 1) {
                 cells_removed++;
             } else {
-                board->board[i * board->size + j] = temp;
+                board->boardPuzzle[i * board->size + j] = temp;
             }
         }
         attempts++;
@@ -204,7 +204,7 @@ void sudokuGenerator(GameBoard *board) {
         success = fillRemaining(board, 0, 0);
 
         if (success) {
-            // Usuń K liczb z sprawdzaniem unikalności
+            board->boardPuzzle = board->board;
             removeKDigitsWithCheck(board);
             success = (countSolutions(board) >= 1);
         }
@@ -214,38 +214,74 @@ void setBoard(GameBoard *board) {
     board->size = board->n*board->n;
     board->total = board->size*board->size;
     board->board = malloc(sizeof(int) * board->total);
+    board->boardPuzzle = malloc(sizeof(int) * board->total);
     const int values[3][3] = {{7,8,9},{37,45,52},{100,110,120}};
     board->level = values[(board->n) - 2][(board->level)-1];
 
+}
+int checkForWin(const GameBoard *board) {
+    return 0;
 }
 
 int main(void) {
     srand(time(NULL));
     GameBoard *gameBoard = malloc(sizeof(GameBoard));
-    Player *player = malloc(sizeof(Player));
-    int checker = 0;
+    //Player *player = malloc(sizeof(Player));
+
+    int *checker = malloc(sizeof(int));
+    *checker = 0;
 
     printf("SUDOKU\n");
     printf("-------\n");
-    while (checker == 0) {
+    while (*checker == 0) {
         printf("Podaj wielkość planszy (2, 3, 4):");
         scanf("%d", &gameBoard->n);
         printf("Podaj poziom trudności (1-3):");
         scanf("%d", &gameBoard->level);
         if (gameBoard->n >1 && gameBoard->level > 0 &&
             gameBoard->level < 4 && gameBoard->n < 5) {
-            checker = 1;
+            *checker = 1;
             break;
         }
         printf("Podałeś Nieprawidłowe wartości\n");
     }
+    free(checker);
     setBoard(gameBoard);
 
     sudokuGenerator(gameBoard);
+    printf("Wygenerowana plansza: \n");
     printSimpleSudoku(gameBoard);
+    int GameOn = 0;
+    int isSaved = 0;
+    while (1) {
+        printf("SUDOKU\n");
+        printf("-------\n");
+        int choice;
+        printf("1.Nowa gra\n");
+        printf("2.Wczytaj gre");
+        if (GameOn == 1)
+            printf("3.Zapisz gre\n");
+        printf("4.Wyjdz");
+        while (choice > 1 && choice < 4) {
+            scanf("%d", &choice);
+        }
+
+
+        switch (choice) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:break;
+        }
+        if (choice == 4 && isSaved == 0) {
+            printf("Twoja gra jest nie zapisana, utracisz cały postęp\n");
+        }
+
+    }
 
 
     free(gameBoard->board);
+    free(gameBoard->boardPuzzle);
     free(gameBoard);
     return 0;
 }
