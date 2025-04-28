@@ -1,34 +1,32 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-//TODO: Trzeba dodać sprawdzanie czy po usuwaniu jest jedno rozwiązanie i usuwać dopiero kiedy tak faktycznie jest,
-//      Zrobić interfejs użytkownika
-//      Zrobić zapis :/
+typedef struct {
+    int n;
+    int size;
+    int total;
+    int *board;
+    int level;
+} GameBoard;
 
-
-
-void printSimpleSudoku(const int *board, int n) {
-    int size = n * n;
-
-    for (int i = 0; i < size; i++) {
-        // Linia pozioma co n wierszy
-        if (i % n == 0) {
-            for (int j = 0; j < size + n + 5; j++) {
+void printSimpleSudoku(const GameBoard *board) {
+    for (int i = 0; i < board->size; i++) {
+        if (i % board->n == 0) {
+            for (int j = 0; j < board->size + board->n + 5; j++) {
                 printf("--");
             }
             printf("\n");
         }
 
-        for (int j = 0; j < size; j++) {
-            // Linia pionowa co n kolumn
-            if (j % n == 0) {
+        for (int j = 0; j < board->size; j++) {
+            if (j % board->n == 0) {
                 printf("| ");
             }
 
-            // Wyświetl liczbę lub kropkę jeśli 0
-            if (board[i * size + j] != 0) {
-                printf("%2d ", board[i * size + j]);
+            if (board->board[i * board->size + j] != 0) {
+                printf("%2d ", board->board[i * board->size + j]);
             } else {
                 printf(" - ");
             }
@@ -36,17 +34,16 @@ void printSimpleSudoku(const int *board, int n) {
         printf("|\n");
     }
 
-    // Dolna linia
-    for (int j = 0; j < size + n + 5; j++) {
+    for (int j = 0; j < board->size + board->n + 5; j++) {
         printf("--");
     }
     printf("\n");
 }
 
-int unUsedInBox(const int *board, int n, int rowStart, int colStart, int num) {
+int unUsedInBox(const int *board, int size, int n, int rowStart, int colStart, int num) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            if (board[(rowStart + i) * (n*n) + (colStart + j)] == num) {
+            if (board[(rowStart + i) * size + (colStart + j)] == num) {
                 return 0;
             }
         }
@@ -54,33 +51,31 @@ int unUsedInBox(const int *board, int n, int rowStart, int colStart, int num) {
     return 1;
 }
 
-int unUsedInCol(const int *board, int j, int num, int n) {
-    for (int i = 0; i < n*n; i++) {
-        if (board[i*(n*n)+j] == num) {
+int unUsedInCol(const int *board, int size, int j, int num) {
+    for (int i = 0; i < size; i++) {
+        if (board[i * size + j] == num) {
             return 0;
         }
     }
     return 1;
 }
 
-int unUsedInRow(const int *board, int i, int num, int n) {
-    for (int j = 0; j < n*n; j++) {
-        if (board[i*(n*n)+j] == num) {
+int unUsedInRow(const int *board, int size, int i, int num) {
+    for (int j = 0; j < size; j++) {
+        if (board[i * size + j] == num) {
             return 0;
         }
     }
     return 1;
 }
 
-int checkIfSafe(const int *board, int i, int j, int num, int n) {
-    return (unUsedInBox(board, n, i-i%n, j-j%n, num) &&
-            unUsedInCol(board, j, num, n) &&
-            unUsedInRow(board, i, num, n));
+int checkIfSafe(const int *board, int size, int n, int i, int j, int num) {
+    return (unUsedInBox(board, size, n, i - i % n, j - j % n, num) &&
+           unUsedInCol(board, size, j, num) &&
+           unUsedInRow(board, size, i, num));
 }
-int countSolutionsHelper(int *board, int i, int j, int n, int count) {
-    int size = n * n;
 
-    // Znajdź następne puste pole
+int countSolutionsHelper(int *board, int size, int n, int i, int j, int count) {
     while (i < size && board[i * size + j] != 0) {
         j++;
         if (j >= size) {
@@ -89,17 +84,14 @@ int countSolutionsHelper(int *board, int i, int j, int n, int count) {
         }
     }
 
-    // Jeśli doszliśmy do końca, zwiększ licznik rozwiązań
     if (i == size) {
         return count + 1;
     }
 
-    // Próbuj wszystkie możliwe liczby
     for (int num = 1; num <= size && count < 2; num++) {
-        if (checkIfSafe(board, i, j, num, n)) {
+        if (checkIfSafe(board, size, n, i, j, num)) {
             board[i * size + j] = num;
 
-            // Rekurencyjnie sprawdź następne pole
             int next_j = j + 1;
             int next_i = i;
             if (next_j >= size) {
@@ -107,9 +99,7 @@ int countSolutionsHelper(int *board, int i, int j, int n, int count) {
                 next_i++;
             }
 
-            count = countSolutionsHelper(board, next_i, next_j, n, count);
-
-            // Backtrack
+            count = countSolutionsHelper(board, size, n, next_i, next_j, count);
             board[i * size + j] = 0;
         }
     }
@@ -117,146 +107,118 @@ int countSolutionsHelper(int *board, int i, int j, int n, int count) {
     return count;
 }
 
-// Główna funkcja sprawdzająca liczbę rozwiązań
-int countSolutions(const int *board, int n) {
-    // Tworzymy kopię planszy, aby nie modyfikować oryginału
-    int size = n * n;
-    int tempBoard[size * size];
-    for (int i = 0; i < size * size; i++) {
-        tempBoard[i] = board[i];
+int countSolutions(const GameBoard *board) {
+    int *tempBoard = malloc(sizeof(int) * board->total);
+    for (int i = 0; i < board->total; i++) {
+        tempBoard[i] = board->board[i];
     }
 
-    return countSolutionsHelper(tempBoard, 0, 0, n, 0);
+    int solutions = countSolutionsHelper(tempBoard, board->size, board->n, 0, 0, 0);
+    free(tempBoard);
+    return solutions;
 }
 
-// Funkcja która zwraca 0 gdy jest więcej niż 1 rozwiązanie
-int hasUniqueSolution(const int *board, int n) {
-    int solutions = countSolutions(board, n);
-    return solutions == 1;
-}
+int fillRemaining(GameBoard *board, int i, int j) {
+    if (i == board->size) return 1;
+    if (j == board->size) return fillRemaining(board, i + 1, 0);
+    if (board->board[i * board->size + j] != 0) return fillRemaining(board, i, j + 1);
 
-int fillRemaining(int *board, int i, int j, int n) {
-    if (i == n*n) return 1;
-    if (j == n*n) return fillRemaining(board, i+1, 0, n);
-    if (board[i*(n*n)+j] != 0) return fillRemaining(board, i, j+1, n);
-
-    for (int num = 1; num <= n*n; num++) {
-        if (checkIfSafe(board, i, j, num, n)) {
-            board[i*(n*n)+j] = num;
-            if (fillRemaining(board, i, j+1, n)) {
+    for (int num = 1; num <= board->size; num++) {
+        if (checkIfSafe(board->board, board->size, board->n, i, j, num)) {
+            board->board[i * board->size + j] = num;
+            if (fillRemaining(board, i, j + 1)) {
                 return 1;
             }
-            board[i*(n*n)+j] = 0;
+            board->board[i * board->size + j] = 0;
         }
     }
     return 0;
 }
 
-void fillBox(int *board, int n, int row, int col) {
+void fillBox(const GameBoard *board, int row, int col) {
     int num;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    for (int i = 0; i < board->n; i++) {
+        for (int j = 0; j < board->n; j++) {
             do {
-                num = (rand() % (n*n)) + 1;
-            } while (!unUsedInBox(board, n, row, col, num));
-            board[(row + i) * (n*n) + (col + j)] = num;
+                num = (rand() % board->size) + 1;
+            } while (!unUsedInBox(board->board, board->size, board->n, row, col, num));
+            board->board[(row + i) * board->size + (col + j)] = num;
         }
     }
 }
 
-void fillDiagonal(int *board, int n) {
-    for (int i = 0; i < n*n; i += n) {
-        fillBox(board, n, i, i);
+void fillDiagonal(const GameBoard *board) {
+    for (int i = 0; i < board->size; i += board->n) {
+        fillBox(board, i, i);
     }
 }
-void removeKDigitsWithCheck(int *board, int n, int k) {
-    int size = n * n;
+
+void removeKDigitsWithCheck(const GameBoard *board) {
     int cells_removed = 0;
     int attempts = 0;
-    const int max_attempts = size * size * 2; // Zabezpieczenie przed nieskończoną pętlą
+    const int max_attempts = board->total * 2;
 
-    while (cells_removed < k && attempts < max_attempts) {
-        // Losujemy komórkę do usunięcia
-        int cellId = rand() % (size * size);
-        int i = cellId / size;
-        int j = cellId % size;
+    while (cells_removed < board->level && attempts < max_attempts) {
+        int cellId = rand() % board->total;
+        int i = cellId / board->size;
+        int j = cellId % board->size;
 
-        // Sprawdzamy czy komórka nie jest już pusta
-        if (board[i * size + j] != 0) {
-            // Zapamiętujemy wartość przed usunięciem
-            int temp = board[i * size + j];
-            board[i * size + j] = 0;
+        if (board->board[i * board->size + j] != 0) {
+            int temp = board->board[i * board->size + j];
+            board->board[i * board->size + j] = 0;
 
-            // Tworzymy kopię planszy do sprawdzenia
-            int tempBoard[size * size];
-            for (int x = 0; x < size * size; x++) {
-                tempBoard[x] = board[x];
-            }
-
-            // Sprawdzamy czy plansza nadal ma dokładnie 1 rozwiązanie
-            if (countSolutions(tempBoard, n) == 1) {
+            if (countSolutions(board) == 1) {
                 cells_removed++;
             } else {
-                // Przywracamy wartość jeśli usunięcie spowodowałoby wiele rozwiązań
-                board[i * size + j] = temp;
+                board->board[i * board->size + j] = temp;
             }
         }
         attempts++;
     }
 
-    if (cells_removed < k) {
-        printf("Uwaga: Usunięto tylko %d z %d liczb (zachowując unikalność rozwiązania)\n", cells_removed, k);
+    if (cells_removed < board->level) {
+        printf("Uwaga: Usunięto tylko %d z %d liczb (zachowując unikalność rozwiązania)\n", cells_removed, board->level);
     }
 }
 
-void sudokuGenerator(int *board, int k, int n) {
+void sudokuGenerator(GameBoard *board) {
     int success = 0;
-    int size = n * n;
-    int total_cells = size * size;
 
     do {
         // Wyczyść planszę
-        for (int i = 0; i < total_cells; i++) {
-            board[i] = 0;
+        for (int i = 0; i < board->total; i++) {
+            board->board[i] = 0;
         }
 
         // Wypełnij bloki diagonalne
-        fillDiagonal(board, n);
+        fillDiagonal(board);
 
         // Wypełnij resztę planszy
-        success = fillRemaining(board, 0, 0, n);
+        success = fillRemaining(board, 0, 0);
 
         if (success) {
             // Usuń K liczb z sprawdzaniem unikalności
-            removeKDigitsWithCheck(board, n, k);
-
-            // Sprawdź czy plansza nadal ma rozwiązanie
-            int tempBoard[size * size];
-            for (int i = 0; i < size * size; i++) {
-                tempBoard[i] = board[i];
-            }
-            success = (countSolutions(tempBoard, n) >= 1);
+            removeKDigitsWithCheck(board);
+            success = (countSolutions(board) >= 1);
         }
-    } while (n == 2 && !success);
+    } while (board->n == 2 && !success);
 }
 
 int main(void) {
     srand(time(NULL));
 
-    int k = 120;
-    int n = 4;
+    GameBoard *gameBoard = malloc(sizeof(GameBoard));
+    gameBoard->n = 4;
+    gameBoard->size = 16;
+    gameBoard->total = 256;
+    gameBoard->board = malloc(sizeof(int) * gameBoard->total);
+    gameBoard->level = 125;
 
-    int gameBoard[n*n][n*n];
-    sudokuGenerator(gameBoard, k, n);
+    sudokuGenerator(gameBoard);
+    printSimpleSudoku(gameBoard);
 
-    printSimpleSudoku(gameBoard, n);
 
-    int solutions = countSolutions(gameBoard, n);
-    if (solutions == 1) {
-        printf("Plansza ma dokładnie 1 rozwiązanie.\n");
-    } else {
-        printf("Plansza ma %d rozwiązań.\n", solutions);
-    }
-
+    free(gameBoard->board);
+    free(gameBoard);
     return 0;
 }
