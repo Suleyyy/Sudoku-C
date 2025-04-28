@@ -1,7 +1,14 @@
+#include <locale.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+
+typedef struct {
+    int cordX;
+    int cordY;
+} Player;
 
 typedef struct {
     int n;
@@ -203,16 +210,36 @@ void sudokuGenerator(GameBoard *board) {
         }
     } while (board->n == 2 && !success);
 }
+void setBoard(GameBoard *board) {
+    board->size = board->n*board->n;
+    board->total = board->size*board->size;
+    board->board = malloc(sizeof(int) * board->total);
+    const int values[3][3] = {{7,8,9},{37,45,52},{100,110,120}};
+    board->level = values[(board->n) - 2][(board->level)-1];
+
+}
 
 int main(void) {
     srand(time(NULL));
-
     GameBoard *gameBoard = malloc(sizeof(GameBoard));
-    gameBoard->n = 4;
-    gameBoard->size = 16;
-    gameBoard->total = 256;
-    gameBoard->board = malloc(sizeof(int) * gameBoard->total);
-    gameBoard->level = 125;
+    Player *player = malloc(sizeof(Player));
+    int checker = 0;
+
+    printf("SUDOKU\n");
+    printf("-------\n");
+    while (checker == 0) {
+        printf("Podaj wielkość planszy (2, 3, 4):");
+        scanf("%d", &gameBoard->n);
+        printf("Podaj poziom trudności (1-3):");
+        scanf("%d", &gameBoard->level);
+        if (gameBoard->n >1 && gameBoard->level > 0 &&
+            gameBoard->level < 4 && gameBoard->n < 5) {
+            checker = 1;
+            break;
+        }
+        printf("Podałeś Nieprawidłowe wartości\n");
+    }
+    setBoard(gameBoard);
 
     sudokuGenerator(gameBoard);
     printSimpleSudoku(gameBoard);
