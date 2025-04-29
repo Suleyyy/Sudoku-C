@@ -7,6 +7,8 @@
 typedef struct {
     int cordX;
     int cordY;
+    int number;
+    int win;
 } Player;
 
 typedef struct {
@@ -204,7 +206,8 @@ void sudokuGenerator(GameBoard *board) {
         success = fillRemaining(board, 0, 0);
 
         if (success) {
-            board->boardPuzzle = board->board;
+            for (int i = 0; i < board->total; i++)
+                board->boardPuzzle[i] = board->board[i];
             removeKDigitsWithCheck(board);
             success = (countSolutions(board) >= 1);
         }
@@ -220,68 +223,174 @@ void setBoard(GameBoard *board) {
 
 }
 int checkForWin(const GameBoard *board) {
-    return 0;
+    for (int i = 0; i < board->total; i++) {
+        if (board->boardPuzzle[i] != board->board[i])
+            return 0;
+    }
+    return 1;
+}
+void saveGameBoard(const char *filename, const GameBoard *game) {
+    FILE *file = fopen(filename, "wb");
+    if (!file) {
+        perror("Błąd otwarcia pliku");
+        return;
+    }
+
+    // Najpierw zapisujemy wszystkie pola oprócz wskaźników
+    fwrite(&game->n, sizeof(int), 1, file);
+    fwrite(&game->size, sizeof(int), 1, file);
+    fwrite(&game->total, sizeof(int), 1, file);
+    fwrite(&game->level, sizeof(int), 1, file);
+
+    // Następnie zapisujemy zawartość tablic board i boardPuzzle
+    fwrite(game->board, sizeof(int), game->size, file);
+    fwrite(game->boardPuzzle, sizeof(int), game->size, file);
+
+    fclose(file);
+}
+GameBoard* loadGameBoard(const char *filename) {
+    FILE *file = fopen(filename, "rb");
+    if (!file) {
+        perror("Błąd otwarcia pliku");
+        return NULL;
+    }
+
+    GameBoard *game = malloc(sizeof(GameBoard));
+    if (!game) {
+        fclose(file);
+        return NULL;
+    }
+
+    // Wczytujemy pola niebędące wskaźnikami
+    fread(&game->n, sizeof(int), 1, file);
+    fread(&game->size, sizeof(int), 1, file);
+    fread(&game->total, sizeof(int), 1, file);
+    fread(&game->level, sizeof(int), 1, file);
+
+    // Alokujemy pamięć dla tablic
+    game->board = malloc(game->size * sizeof(int));
+    game->boardPuzzle = malloc(game->size * sizeof(int));
+    if (!game->board || !game->boardPuzzle) {
+        free(game->board);
+        free(game->boardPuzzle);
+        free(game);
+        fclose(file);
+        return NULL;
+    }
+
+    // Wczytujemy zawartość tablic
+    fread(game->board, sizeof(int), game->size, file);
+    fread(game->boardPuzzle, sizeof(int), game->size, file);
+
+    fclose(file);
+    return game;
 }
 
 int main(void) {
     srand(time(NULL));
     GameBoard *gameBoard = malloc(sizeof(GameBoard));
-    //Player *player = malloc(sizeof(Player));
+    Player *player = malloc(sizeof(Player));
 
-    int *checker = malloc(sizeof(int));
-    *checker = 0;
-
+    int gameOn = 0;
     printf("SUDOKU\n");
     printf("-------\n");
-    while (*checker == 0) {
-        printf("Podaj wielkość planszy (2, 3, 4):");
-        scanf("%d", &gameBoard->n);
-        printf("Podaj poziom trudności (1-3):");
-        scanf("%d", &gameBoard->level);
-        if (gameBoard->n >1 && gameBoard->level > 0 &&
-            gameBoard->level < 4 && gameBoard->n < 5) {
-            *checker = 1;
-            break;
-        }
-        printf("Podałeś Nieprawidłowe wartości\n");
-    }
-    free(checker);
-    setBoard(gameBoard);
-
-    sudokuGenerator(gameBoard);
-    printf("Wygenerowana plansza: \n");
-    printSimpleSudoku(gameBoard);
-    int GameOn = 0;
-    int isSaved = 0;
     while (1) {
-        printf("SUDOKU\n");
-        printf("-------\n");
-        int choice;
+        int choice = 0;
         printf("1.Nowa gra\n");
-        printf("2.Wczytaj gre");
-        if (GameOn == 1)
-            printf("3.Zapisz gre\n");
-        printf("4.Wyjdz");
-        while (choice > 1 && choice < 4) {
+        printf("2.Wczytaj gre\n");
+        printf("3.Wyjdz z gry\n");
+        while (choice < 1 || choice > 4) {
+            printf("Wybierz:");
             scanf("%d", &choice);
         }
 
+            switch (choice) {
+                case 1:
+                    if (gameOn == 0) {
+                        player->win = 0;
+                        int *checker = malloc(sizeof(int));
+                        *checker = 0;
+                        while (*checker == 0) {
+                            printf("Podaj wielkość planszy (2, 3, 4):");
+                            scanf("%d", &gameBoard->n);
+                            printf("Podaj poziom trudności (1-3):");
+                            scanf("%d", &gameBoard->level);
+                            if (gameBoard->n >1 && gameBoard->level > 0 &&
+                                gameBoard->level < 4 && gameBoard->n < 5) {
+                                *checker = 1;
+                                break;
+                                }
+                            printf("Podałeś Nieprawidłowe wartości\n");
+                        }
+                        free(checker);
+                        setBoard(gameBoard);
 
-        switch (choice) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:break;
-        }
-        if (choice == 4 && isSaved == 0) {
-            printf("Twoja gra jest nie zapisana, utracisz cały postęp\n");
+                        sudokuGenerator(gameBoard);
+                        printf("Wygenerowana plansza: \n");
+                        printSimpleSudoku(gameBoard);
+                    }
+                gameOn = 1;
+                while (gameOn == 1) {
+                    int gameChoice;
+                    printf("1.Wprowadź liczbe\n");
+                    printf("2.Usuń liczbe\n");
+                    printf("3.Zapisz gre\n");
+                    printf("4.Wyjdz\nWybór:");
+                    scanf("%d", &gameChoice);
+                    switch (gameChoice) {
+                        case 1:
+                            printf("Podaj współrzędne:");
+                            scanf("%d%d", (player->cordY - 65), player->cordX);
+                        if (player->cordY <0 || player->cordY > gameBoard->size ||
+                            player->cordX > gameBoard->size || player->cordX < 0 ||
+                            gameBoard->boardPuzzle[player->cordY*gameBoard->size+player->cordX] == 0) {
+                            printf("Nieprawidłowe współrzędne");
+                            break;
+                            }
+                        printf("\nPodaj liczbę:");
+                        scanf("%d", player->number);
+                        if (player->number < 0 || player->number > gameBoard->size) {
+                            printf("Liczba z poza przedziału");
+                            break;
+                        }
+                        gameBoard->boardPuzzle[player->cordY*gameBoard->size+player->cordX] = player->number;
+                        player->win = checkForWin(gameBoard);
+                        if (player->win == 1) {
+                            printf("Wygrałeś");
+                            gameOn = 0;
+                        }
+                        break;
+                        case 2:
+                            scanf("Podaj wspołrzędne: %d%d", (player->cordY - 65), player->cordX);
+                        if (player->cordY <0 || player->cordY > gameBoard->size ||
+                            player->cordX > gameBoard->size || player->cordX < 0 ||
+                            gameBoard->boardPuzzle[player->cordY*gameBoard->size+player->cordX] == 0) {
+                            printf("Nieprawidłowe współrzędne");
+                            break;
+                            }
+                        gameBoard->boardPuzzle[player->cordY*gameBoard->size+player->cordX] = 0;
+                        printSimpleSudoku(gameBoard);
+                        case 3:
+                            saveGameBoard("../saves/save1.bin", gameBoard);
+                        default:
+                        case 4:
+                            gameOn = 0;
+                    }
+                }
+                case 2:
+                    gameBoard = loadGameBoard("../saves/save1.bin");
+                    break;
+                default:
+                    break;
+            }
+            if (choice == 3)
+                break;
         }
 
+
+        free(gameBoard->board);
+        free(gameBoard->boardPuzzle);
+        free(gameBoard);
+        free(player);
+        return 0;
     }
-
-
-    free(gameBoard->board);
-    free(gameBoard->boardPuzzle);
-    free(gameBoard);
-    return 0;
-}
