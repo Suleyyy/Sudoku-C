@@ -1,2 +1,2 @@
-# Sudoku-C
+# 🎮Sudoku-C
 Jakoś to będzie 
