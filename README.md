@@ -1,2 +1,2 @@
 # 🎮Sudoku-C
-![dudu](./images/dudu.jpg)
+![dudu](images/dudu.jpg)
