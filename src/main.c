@@ -12,7 +12,7 @@ int main(void) {
     if (gameBoard == NULL || player == NULL) {
         return -1;
     }
-    gameBoard->gameOn = 0;
+    gameBoard->gameOn = -1;
 
     while (1) {
         title();
