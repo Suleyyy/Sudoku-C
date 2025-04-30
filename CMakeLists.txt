@@ -3,4 +3,7 @@ project(Sudoku-C C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Sudoku-C main.c)
+include_directories(include)
+
+add_executable(Sudoku-C src/main.c src/play.c src/printer.c src/generator.c src/initBoard.c src/saver.c src/loader.c src/clock.c)
+
