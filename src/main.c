@@ -21,7 +21,8 @@ int main(void) {
         printf("1. Nowa gra\n");
         printf("2. Wczytaj gre\n");
         printf("3. Kontynuuj gre\n");
-        printf("4. Wyjdz z gry\n");
+        printf("4. Jak grac\n");
+        printf("5. Wyjdz z gry\n");
         printf("Wybierz: ");
         if (scanf("%d", &choice) != 1) {
             while (getchar() != '\n'){} //czyści bufor z scanf
@@ -133,6 +134,17 @@ int main(void) {
                 break;
             }
             case 4: {
+                system("CLS");
+                printf("ZASADY:\n");
+                printf("- Kazdy mniejszy kwadracik ma miec unikatowa liczbe\n");
+                printf("- W kazdym rzedzie ma byc unikatowa liczba\n");
+                printf("- W kazdej kolumnie ma byc unikatowa liczba\n");
+                printf("- Nacisnij Enter, aby kontynuowac...\n");
+                getchar();
+                system("CLS");
+                break;
+            }
+            case 5: {
                 if (gameBoard->board) free(gameBoard->board);
                 if (gameBoard->boardPuzzle) free(gameBoard->boardPuzzle);
                 free(gameBoard);

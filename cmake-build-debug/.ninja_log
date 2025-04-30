@@ -38,3 +38,12 @@
 3	60	7677356362091089	CMakeFiles/Sudoku-C.dir/src/saver.c.obj	a0481f6182b438fa
 6	61	7677356362121114	CMakeFiles/Sudoku-C.dir/src/loader.c.obj	977d13b42ec41fd4
 61	128	7677356362671612	Sudoku-C.exe	2186aec2dcb2efc9
+9	61	7677374310963138	CMakeFiles/Sudoku-C.dir/src/initBoard.c.obj	552f9de23bcc6046
+11	70	7677374310983151	CMakeFiles/Sudoku-C.dir/src/saver.c.obj	a0481f6182b438fa
+13	72	7677374311003172	CMakeFiles/Sudoku-C.dir/src/loader.c.obj	977d13b42ec41fd4
+7	75	7677374310943120	CMakeFiles/Sudoku-C.dir/src/generator.c.obj	e3c8bd919416b732
+5	75	7677374310923100	CMakeFiles/Sudoku-C.dir/src/play.c.obj	362f6936332f36ff
+2	79	7677374310903082	CMakeFiles/Sudoku-C.dir/src/main.c.obj	2965234a05c58bcb
+79	148	7677374311663771	Sudoku-C.exe	2186aec2dcb2efc9
+3	65	7677374747309674	CMakeFiles/Sudoku-C.dir/src/main.c.obj	2965234a05c58bcb
+65	131	7677374747940248	Sudoku-C.exe	2186aec2dcb2efc9
