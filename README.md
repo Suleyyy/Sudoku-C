@@ -1,2 +1,2 @@
 # 🎮Sudoku-C
-Jakoś to będzie 
+![dudu](./images/dudu.jpg)
