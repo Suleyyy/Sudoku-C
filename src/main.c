@@ -126,7 +126,7 @@ int main(void) {
                 break;
             }
             case 3: {
-                if (gameBoard->gameOn) {
+                if (gameBoard->gameOn != -1) {
                     playGame(gameBoard, player);
                 } else {
                     printf("Nie masz aktywnej gry do kontynuacji.\n");

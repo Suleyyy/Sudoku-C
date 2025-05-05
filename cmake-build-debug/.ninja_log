@@ -19,3 +19,9 @@
 88	180	7677451935031267	Sudoku-C.exe	2186aec2dcb2efc9
 4	70	7677454973656927	CMakeFiles/Sudoku-C.dir/src/main.c.obj	2965234a05c58bcb
 70	136	7677454974307516	Sudoku-C.exe	2186aec2dcb2efc9
+11	220	7681783145859532	CMakeFiles/Sudoku-C.dir/src/clock.c.obj	9f60aaf84c7dc199
+220	440	7681783147951427	Sudoku-C.exe	2186aec2dcb2efc9
+3	55	7681783792579138	CMakeFiles/Sudoku-C.dir/src/clock.c.obj	9f60aaf84c7dc199
+3	68	7681783858408754	Sudoku-C.exe	2186aec2dcb2efc9
+3	74	7681785444426351	CMakeFiles/Sudoku-C.dir/src/main.c.obj	2965234a05c58bcb
+74	139	7681785445136999	Sudoku-C.exe	2186aec2dcb2efc9
