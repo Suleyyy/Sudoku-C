@@ -51,5 +51,6 @@ void pauseClock(GameClock *clock);
 void resumeClock(GameClock *clock);
 double getElapsedTime(const GameClock *clock);
 void showTime(const GameClock *clock);
+void solver(GameBoard *board);
 
 #endif
