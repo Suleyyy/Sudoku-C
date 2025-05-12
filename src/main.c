@@ -23,6 +23,7 @@ int main(void) {
         printf("3. Kontynuuj gre\n");
         printf("4. Jak grac\n");
         printf("5. Wyjdz z gry\n");
+        printf("6. Solver\n");
         printf("Wybierz: ");
         if (scanf("%d", &choice) != 1) {
             while (getchar() != '\n'){} //czyści bufor z scanf
@@ -42,6 +43,7 @@ int main(void) {
                     }
                     free(gameBoard->board);
                     free(gameBoard->boardPuzzle);
+                    free(gameBoard->frozenCords);
                 }
 
                 player->win = 0;
@@ -84,6 +86,7 @@ int main(void) {
 
                     free(gameBoard->board);
                     free(gameBoard->boardPuzzle);
+                    free(gameBoard->frozenCords);
                 }
 
                 char *nazwa = malloc(100 * sizeof(char));
@@ -147,11 +150,22 @@ int main(void) {
             case 5: {
                 if (gameBoard->board) free(gameBoard->board);
                 if (gameBoard->boardPuzzle) free(gameBoard->boardPuzzle);
+                if (gameBoard->frozenCords) free(gameBoard->frozenCords);
                 free(gameBoard);
                 free(player);
                 printf("Dziekujemy za gre!\n");
                 sleep(3);
                 return 0;
+            }
+            case 6: {
+                if (gameBoard->gameOn != -1)
+                    solver(gameBoard);
+                else {
+                    printf("Stworz Sudoku 9x9");
+                    sleep(3);
+                }
+                system("CLS");
+                break;
             }
             default: {
                 printf("Nieprawidlowy wybór!\n");

@@ -77,6 +77,7 @@ void playGame(GameBoard *gameBoard, Player *player) {
                 player->win = checkForWin(gameBoard);
                 if (player->win) {
                     printf("\nGratulacje! Rozwiazales Sudoku!\n");
+                    sleep(3);
                     gameBoard->gameOn = 0;
                 }
                 break;
@@ -87,6 +88,7 @@ void playGame(GameBoard *gameBoard, Player *player) {
                 if (scanf(" %c %d", &rowChar, &player->cordX) != 2) {
                     while (getchar() != '\n') {}
                     printf("Nieprawidlowy format! Uzyj np. A1\n");
+                    sleep(3);
                     break;
                 }
                 while (getchar() != '\n') {}
@@ -98,16 +100,25 @@ void playGame(GameBoard *gameBoard, Player *player) {
                     player->cordX < 0 || player->cordX >= gameBoard->size) {
                     printf("Wspolrzedne poza zakresem! Dostepne: %c-%c i 1-%d\n",
                            'A', 'A' + gameBoard->size - 1, gameBoard->size);
+                    sleep(3);
                     break;
                     }
 
                 if (gameBoard->boardPuzzle[player->cordY * gameBoard->size + player->cordX] == 0) {
                     printf("To pole jest juz puste!\n");
+                    sleep(3);
+                    break;
+                }
+
+                if (gameBoard->frozenCords[player->cordY * gameBoard->size + player->cordX] == 1) {
+                    printf("Nie wolno usunac pola inicjacji!\n");
+                    sleep(3);
                     break;
                 }
 
                 gameBoard->boardPuzzle[player->cordY * gameBoard->size + player->cordX] = 0;
                 printf("Usunieto liczbe z pola %c%d\n", rowChar, player->cordX + 1);
+                sleep(3);
                 break;
             }
             case 3: {
@@ -132,6 +143,7 @@ void playGame(GameBoard *gameBoard, Player *player) {
                 strcat(sciezka, nazwa);
                 strcat(sciezka, ".bin");
 
+                pauseClock(&gameBoard->clock);
                 saveGameBoard(sciezka, gameBoard);
                 sleep(3);
                 printf("Gra zostala zapisana do pliku: %s\n", sciezka);

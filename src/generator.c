@@ -89,6 +89,7 @@ int fillRemaining(GameBoard *board, int i, int j) {
     for (int num = 1; num <= board->size; num++) {
         if (checkIfSafe(board->board, board->size, board->n, i, j, num)) {
             board->board[i * board->size + j] = num;
+            board->frozenCords[i * board->size + j] = 1;
             if (fillRemaining(board, i, j + 1)) {
                 return 1;
             }
@@ -106,6 +107,7 @@ void fillBox(const GameBoard *board, int row, int col) {
                 num = (rand() % board->size) + 1;
             } while (!unUsedInBox(board->board, board->size, board->n, row, col, num));
             board->board[(row + i) * board->size + (col + j)] = num;
+            board->frozenCords[(row + i) * board->size + (col + j)] = 1;
         }
     }
 }
@@ -129,11 +131,13 @@ void removeKDigitsWithCheck(const GameBoard *board) {
         if (board->boardPuzzle[i * board->size + j] != 0) {
             int temp = board->boardPuzzle[i * board->size + j];
             board->boardPuzzle[i * board->size + j] = 0;
+            board->frozenCords[i * board->size + j] = 0;
 
             if (countSolutions(board) == 1) {
                 cells_removed++;
             } else {
                 board->boardPuzzle[i * board->size + j] = temp;
+                board->frozenCords[i * board->size + j] = 1;
             }
         }
         attempts++;

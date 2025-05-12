@@ -14,5 +14,6 @@ add_executable(Sudoku-C
         src/saver.c
         src/loader.c
         src/clock.c
+        src/solver.c
 )
 

@@ -34,7 +34,8 @@ void saveGameBoard(const char *filename, const GameBoard *game) {
     }
 
     if (fwrite(game->board, sizeof(int), game->total, file) != (size_t)game->total ||
-        fwrite(game->boardPuzzle, sizeof(int), game->total, file) != (size_t)game->total) {
+        fwrite(game->boardPuzzle, sizeof(int), game->total, file) != (size_t)game->total ||
+        fwrite(game->frozenCords, sizeof(int), game->total, file) != (size_t)game->total) {
         fclose(file);
         printf("Blad zapisu danych planszy\n");
         return;

@@ -22,6 +22,7 @@ typedef struct {
     int total;
     int *board;
     int *boardPuzzle;
+    int *frozenCords;
     int level;
     int gameOn;
     GameClock clock;

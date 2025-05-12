@@ -48,7 +48,8 @@ GameBoard* loadGameBoard(const char *filename) {
 
     if (!game->board || !game->boardPuzzle ||
         fread(game->board, sizeof(int), game->total, file) != (size_t)game->total ||
-        fread(game->boardPuzzle, sizeof(int), game->total, file) != (size_t)game->total) {
+        fread(game->boardPuzzle, sizeof(int), game->total, file) != (size_t)game->total ||
+        fwrite(game->frozenCords, sizeof(int), game->total, file) != (size_t)game->total) {
         free(game->board);
         free(game->boardPuzzle);
         free(game);
