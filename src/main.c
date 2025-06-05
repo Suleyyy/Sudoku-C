@@ -24,6 +24,7 @@ int main(void) {
         printf("4. Jak grac\n");
         printf("5. Wyjdz z gry\n");
         printf("6. Solver\n");
+        printf("7. GA_Solver\n");
         printf("Wybierz: ");
         if (scanf("%d", &choice) != 1) {
             while (getchar() != '\n'){} //czyści bufor z scanf
@@ -160,6 +161,16 @@ int main(void) {
             case 6: {
                 if (gameBoard->gameOn != -1)
                     solver(gameBoard);
+                else {
+                    printf("Stworz Sudoku 9x9");
+                    sleep(3);
+                }
+                system("CLS");
+                break;
+            }
+            case 7: {
+                if (gameBoard->gameOn != -1)
+                    gasolver(gameBoard);
                 else {
                     printf("Stworz Sudoku 9x9");
                     sleep(3);

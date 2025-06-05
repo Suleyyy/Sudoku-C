@@ -28,8 +28,14 @@ typedef struct {
     GameClock clock;
 } GameBoard;
 
+typedef struct {
+    int *board;
+    int fitness;
+} Individual;
+
 void title();
 void printSimpleSudoku(const GameBoard *board);
+void printSimpleSudokuv2(const int *clone ,const GameBoard *board);
 int unUsedInBox(const int *board, int size, int n, int rowStart, int colStart, int num);
 int unUsedInCol(const int *board, int size, int j, int num);
 int unUsedInRow(const int *board, int size, int i, int num);
@@ -53,5 +59,6 @@ void resumeClock(GameClock *clock);
 double getElapsedTime(const GameClock *clock);
 void showTime(const GameClock *clock);
 void solver(GameBoard *board);
+void gasolver(GameBoard *board);
 
 #endif

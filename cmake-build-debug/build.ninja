@@ -112,6 +112,13 @@ build CMakeFiles/Sudoku-C.dir/src/solver.c.obj: C_COMPILER__Sudoku-C_unscanned_D
   OBJECT_DIR = CMakeFiles\Sudoku-C.dir
   OBJECT_FILE_DIR = CMakeFiles\Sudoku-C.dir\src
 
+build CMakeFiles/Sudoku-C.dir/src/gasolver.c.obj: C_COMPILER__Sudoku-C_unscanned_Debug C$:/Users/mikol/Desktop/Sudoku-C/src/gasolver.c || cmake_object_order_depends_target_Sudoku-C
+  DEP_FILE = CMakeFiles\Sudoku-C.dir\src\gasolver.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/mikol/Desktop/Sudoku-C/include
+  OBJECT_DIR = CMakeFiles\Sudoku-C.dir
+  OBJECT_FILE_DIR = CMakeFiles\Sudoku-C.dir\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Sudoku-C
@@ -120,7 +127,7 @@ build CMakeFiles/Sudoku-C.dir/src/solver.c.obj: C_COMPILER__Sudoku-C_unscanned_D
 #############################################
 # Link the executable Sudoku-C.exe
 
-build Sudoku-C.exe: C_EXECUTABLE_LINKER__Sudoku-C_Debug CMakeFiles/Sudoku-C.dir/src/main.c.obj CMakeFiles/Sudoku-C.dir/src/play.c.obj CMakeFiles/Sudoku-C.dir/src/printer.c.obj CMakeFiles/Sudoku-C.dir/src/generator.c.obj CMakeFiles/Sudoku-C.dir/src/initBoard.c.obj CMakeFiles/Sudoku-C.dir/src/saver.c.obj CMakeFiles/Sudoku-C.dir/src/loader.c.obj CMakeFiles/Sudoku-C.dir/src/clock.c.obj CMakeFiles/Sudoku-C.dir/src/solver.c.obj
+build Sudoku-C.exe: C_EXECUTABLE_LINKER__Sudoku-C_Debug CMakeFiles/Sudoku-C.dir/src/main.c.obj CMakeFiles/Sudoku-C.dir/src/play.c.obj CMakeFiles/Sudoku-C.dir/src/printer.c.obj CMakeFiles/Sudoku-C.dir/src/generator.c.obj CMakeFiles/Sudoku-C.dir/src/initBoard.c.obj CMakeFiles/Sudoku-C.dir/src/saver.c.obj CMakeFiles/Sudoku-C.dir/src/loader.c.obj CMakeFiles/Sudoku-C.dir/src/clock.c.obj CMakeFiles/Sudoku-C.dir/src/solver.c.obj CMakeFiles/Sudoku-C.dir/src/gasolver.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Sudoku-C.dir

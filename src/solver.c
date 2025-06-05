@@ -66,29 +66,31 @@ int calculateCost(const GameBoard *board) {
     return cost;
 }
 
-void generateNeighbor(GameBoard *board) {
+void generateNeighbor(GameBoard *original, GameBoard *neighbor) {
+    memcpy(neighbor->boardPuzzle, original->boardPuzzle, original->total * sizeof(int));
+
     int attempts = 0;
     const int max_attempts = 100;
 
     while (attempts < max_attempts) {
-        int blockRow = rand() % board->n;
-        int blockCol = rand() % board->n;
+        int blockRow = rand() % original->n;
+        int blockCol = rand() % original->n;
 
-        int row1 = rand() % board->n;
-        int col1 = rand() % board->n;
-        int row2 = rand() % board->n;
-        int col2 = rand() % board->n;
+        int row1 = rand() % original->n;
+        int col1 = rand() % original->n;
+        int row2 = rand() % original->n;
+        int col2 = rand() % original->n;
 
-        int cell1 = (blockRow * board->n + row1) * board->size + (blockCol * board->n + col1);
-        int cell2 = (blockRow * board->n + row2) * board->size + (blockCol * board->n + col2);
+        int cell1 = (blockRow * original->n + row1) * original->size + (blockCol * original->n + col1);
+        int cell2 = (blockRow * original->n + row2) * original->size + (blockCol * original->n + col2);
 
         if (cell1 != cell2 &&
-            board->frozenCords[cell1] == 0 &&
-            board->frozenCords[cell2] == 0) {
+            original->frozenCords[cell1] == 0 &&
+            original->frozenCords[cell2] == 0) {
 
-            int temp = board->boardPuzzle[cell1];
-            board->boardPuzzle[cell1] = board->boardPuzzle[cell2];
-            board->boardPuzzle[cell2] = temp;
+            int temp = neighbor->boardPuzzle[cell1];
+            neighbor->boardPuzzle[cell1] = neighbor->boardPuzzle[cell2];
+            neighbor->boardPuzzle[cell2] = temp;
             return;
             }
         attempts++;
@@ -111,7 +113,10 @@ void solve_sudoku_sa(GameBoard *board, double T_start, double T_end, double alph
 
     while (T > T_end && currentCost > 0) {
         GameBoard neighborBoard = *board;
-        generateNeighbor(&neighborBoard);
+        neighborBoard.boardPuzzle = malloc(board->total * sizeof(int));
+        neighborBoard.frozenCords = board->frozenCords;
+
+        generateNeighbor(board,&neighborBoard);
 
         int neighborCost = calculateCost(&neighborBoard);
         int deltaE = neighborCost - currentCost;
@@ -133,7 +138,8 @@ void solve_sudoku_sa(GameBoard *board, double T_start, double T_end, double alph
         }
         T *= alpha;
         iterations++;
-        printf("Iter: %d, Temp: %f, CurrCost:, %d, BestCost: %d\n", iterations, T, currentCost, bestCost);
+        if (iterations % 100000 == 0 || bestCost == 0)
+            printf("Iter: %d, Temp: %f, CurrCost:, %d, BestCost: %d\n", iterations, T, currentCost, bestCost);
     }
     memcpy(board->boardPuzzle, bestSolution, board->total * sizeof(int));
     free(bestSolution);
@@ -141,9 +147,9 @@ void solve_sudoku_sa(GameBoard *board, double T_start, double T_end, double alph
 }
 
 void solver(GameBoard *board) {
-    double T_start = 10000.0;
-    double T_end = 0.0001;
-    double alpha = 0.999;
+    double T_start = 100.0;
+    double T_end = 0.00001;
+    double alpha = 0.99999;
 
     initializeSudoku(board);
 
